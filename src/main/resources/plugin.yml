@@ -1,0 +1,5 @@
+name: MouseFFA
+version: '${version}'
+main: dev.cabotmc.mouseffa.MouseFFA
+api-version: 1.19
+authors: [ EggAllocationService, NoaHolly ]
