@@ -5,12 +5,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
+
+import java.util.List;
 
 public final class MouseFFA extends JavaPlugin {
     public static Team playersTeam = null;
@@ -44,8 +47,8 @@ public final class MouseFFA extends JavaPlugin {
                 }
             }
         }, 0, 20 * 5);
-        getServer().getPluginManager().registerEvents(new GameListener(), this);
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
+        GameManager.changeGameMode("Instagib");
     }
     public static boolean tryGiveArrow(Player p ) {
         var i = p.getInventory().getItem(8);
