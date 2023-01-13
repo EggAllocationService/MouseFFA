@@ -46,9 +46,11 @@ public final class MouseFFA extends JavaPlugin {
                     p.playSound(p, Sound.ENTITY_ITEM_PICKUP, 0.4f, 1f);
                 }
             }
-        }, 0, 20 * 5);
+        }, 0, 20 * 3);
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
-        GameManager.changeGameMode("Instagib");
+        GameManager.changeGameMode("Default");
+        getCommand("setgamemode")
+                .setExecutor(new GameModeCommand());
     }
     public static boolean tryGiveArrow(Player p ) {
         var i = p.getInventory().getItem(8);

@@ -54,7 +54,8 @@ public class InstagibGamemode extends DefaultGamemode {
         } else {
             lookHit = lh.getHitPosition();
         }
-        var max = lookHit.distance(p.getLocation().toVector());
+
+        var max = 100d;//lookHit.distance(p.getLocation().toVector());
 
         var opts = new Particle.DustOptions(Color.fromRGB(50, 157, 168), 0.5f);
         HashSet<Entity> hitTargets = new HashSet<>();
