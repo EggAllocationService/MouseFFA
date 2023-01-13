@@ -1,9 +1,6 @@
 package dev.cabotmc.mouseffa;
 
-import dev.cabotmc.mouseffa.gamemodes.DefaultGamemode;
-import dev.cabotmc.mouseffa.gamemodes.HeadshotOnlyGamemode;
-import dev.cabotmc.mouseffa.gamemodes.InstagibGamemode;
-import dev.cabotmc.mouseffa.gamemodes.InstagibMileHighGamemode;
+import dev.cabotmc.mouseffa.gamemodes.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -21,6 +18,7 @@ public class GameManager {
         addGamemode(new InstagibGamemode());
         addGamemode(new InstagibMileHighGamemode());
         addGamemode(new HeadshotOnlyGamemode());
+        addGamemode(new InstagibWallbangGamemode());
     }
     static GameMode currentGameMode = null;
     public static GameMode getCurrentGameMode() {

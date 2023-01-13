@@ -18,7 +18,7 @@ public class HeadshotOnlyGamemode extends DefaultGamemode {
         var hit = e.getCollidedWith();
         if (hit instanceof Player) {
             var p = (Player) hit;
-            if (Math.abs(e.getEntity().getLocation().getY() - p.getEyeLocation().getY()) > 0.4) {
+            if (e.getEntity().getLocation().getY() < p.getEyeLocation().getY() - 0.3) {
                 e.getEntity().remove();
                 return;
             }
