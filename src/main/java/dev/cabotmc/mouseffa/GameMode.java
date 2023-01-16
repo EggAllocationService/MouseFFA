@@ -6,7 +6,11 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -19,13 +23,44 @@ import java.time.temporal.ChronoUnit;
 
 public abstract class GameMode {
     public abstract String getName();
-
+    public void activate() {
+        for (int i = 0; i < 10; i ++) {
+            ChickenManager.spawnChicken();
+        }
+    }
     public abstract void resetPlayer(Player p);
     public abstract void cleanup();
+    public void cleanup0() {
+        cleanup();
+        for (Entity e : Bukkit.getWorld("world").getEntities()) {
+            if (!(e instanceof Player)) {
+                e.remove();
+            }
+        }
+    }
 
-    public void onKill(Player killer, Player k) {
-        Bukkit.getServer().sendMessage(createKillMessage(killer, k));
+    public void onKill(Player killer, LivingEntity died) {
+        Bukkit.getServer().sendMessage(createKillMessage(killer, died));
+        var score = MouseFFA.scoreObjective.getScore(killer);
         killer.playSound(killer, Sound.ENTITY_ARROW_HIT_PLAYER, 0.8f, 1f);
+        if (died instanceof Chicken) {
+            died.getWorld().playSound(died.getLocation(), Sound.ENTITY_CHICKEN_DEATH, 1.0f, 1.0f);
+            died.getWorld().spawnParticle(
+                    Particle.ITEM_CRACK,
+                    died.getLocation(),
+                    20,
+                    0.5,
+                    0.5,
+                    0.5,
+                    0.1d,
+                    new ItemStack(Material.FEATHER)
+                    );
+            score.setScore(score.getScore() + 1);
+            died.remove();
+            return;
+        }
+        var k = (Player) died;
+
         SpawnLocationChooser.pickRandomSpawnAndTeleport(k);
         k.playSound(k.getLocation(), Sound.ENTITY_PLAYER_DEATH, 0.8f, 1f);
         k.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1, true, false));
@@ -35,8 +70,8 @@ public abstract class GameMode {
                 createDeathSymbol(killer),
                 defaultTimes
         ));
-        var score = MouseFFA.scoreObjective.getScore(killer);
-        score.setScore(score.getScore() + 1);
+
+        score.setScore(score.getScore() + 5);
         postKill(killer, k);
     }
     public abstract void postKill(Player killer, Player died);
@@ -47,7 +82,7 @@ public abstract class GameMode {
             e.getEntity().remove();
         }
     }
-    public static Component createKillMessage(Player killer, Player killed) {
+    public static Component createKillMessage(Player killer, LivingEntity killed) {
         var base = Component.text(killer.getName(), TextColor.color(0x2cde5c));
         base = base.append(createDeathSymbol(killed));
         var para = Component.text(" (", TextColor.color(0x505050));
@@ -58,7 +93,7 @@ public abstract class GameMode {
         base = base.append(Component.text(")", TextColor.color(0x505050)));
         return base;
     }
-    public static Component createDeathSymbol(Player killed) {
+    public static Component createDeathSymbol(LivingEntity killed) {
         return Component.text(" \u2620 " + killed.getName(), TextColor.color(0xe84141));
     }
 }

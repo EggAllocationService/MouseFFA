@@ -31,7 +31,7 @@ public class GameManager {
            if (currentGameMode instanceof Listener) {
                HandlerList.unregisterAll((Listener) currentGameMode);
            }
-           currentGameMode.cleanup();
+           currentGameMode.cleanup0();
         }
         currentGameMode = g;
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -40,5 +40,6 @@ public class GameManager {
         if (currentGameMode instanceof  Listener) {
             Bukkit.getPluginManager().registerEvents((Listener) currentGameMode, MouseFFA.instance);
         }
+        currentGameMode.activate();
     }
 }
