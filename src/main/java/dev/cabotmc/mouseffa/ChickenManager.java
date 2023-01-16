@@ -20,6 +20,7 @@ public class ChickenManager {
         e.setSilent(true);
         e.setPersistent(true);
         w.spawnParticle(Particle.CLOUD, e.getLocation(), 20);
+        break;
       }
     }
   }
