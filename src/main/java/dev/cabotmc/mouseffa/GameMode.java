@@ -47,11 +47,11 @@ public abstract class GameMode {
             died.getWorld().playSound(died.getLocation(), Sound.ENTITY_CHICKEN_DEATH, 1.0f, 1.0f);
             died.getWorld().spawnParticle(
                     Particle.ITEM_CRACK,
-                    died.getLocation(),
-                    20,
-                    0.5,
-                    0.5,
-                    0.5,
+                    died.getLocation().add(0, 0.5, 0),
+                    100,
+                    0.2,
+                    0.2,
+                    0.2,
                     0.1d,
                     new ItemStack(Material.FEATHER)
                     );

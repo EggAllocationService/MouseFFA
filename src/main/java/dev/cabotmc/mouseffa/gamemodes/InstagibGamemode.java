@@ -3,6 +3,7 @@ package dev.cabotmc.mouseffa.gamemodes;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -34,6 +35,9 @@ public class InstagibGamemode extends DefaultGamemode {
         p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1000000 * 20, 0, true, false));
         p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000 * 20, 0, true, false));
     }
+    public boolean canPenetrateWalls() {
+        return false;
+    }
 
     @EventHandler
     public void fire(EntityShootBowEvent e) {
@@ -55,17 +59,19 @@ public class InstagibGamemode extends DefaultGamemode {
             lookHit = lh.getHitPosition();
         }
 
-        var max = lookHit.distance(p.getLocation().toVector());
+        var max = canPenetrateWalls() ? 100 :  lookHit.distance(p.getLocation().toVector());
 
         var opts = new Particle.DustOptions(Color.fromRGB(50, 157, 168), 0.5f);
         HashSet<Entity> hitTargets = new HashSet<>();
+        boolean wasInBlock = false;
         for (double distanceMultipler = 0.0d; distanceMultipler < max; distanceMultipler += 0.1d) {
             var curr = baseLoc.clone().add(
                     lookVector.clone().multiply(distanceMultipler)
             );
+            var loc = curr.toLocation(p.getWorld());
             p.getWorld().spawnParticle(
                     Particle.REDSTONE,
-                    curr.toLocation(p.getWorld()),
+                    loc,
                     3,
                      0.05d,
                      0.05d,
@@ -73,6 +79,32 @@ public class InstagibGamemode extends DefaultGamemode {
                      0.05d,
                           opts
             );
+            if (loc.getBlock().getType().isSolid()) {
+                // solid block
+                if (!wasInBlock) {
+                    // passing from solid block into air
+                    p.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 0.7f, 1f);
+                    p.getWorld().spawnParticle(Particle.FLASH,
+                            loc,
+                            10,
+                            0.5d,
+                            0.5d,
+                            0.5d);
+                    wasInBlock = true;
+                }
+            } else {
+                // not solid
+                if (wasInBlock) {
+                    // passing from solid to non-solid
+                    p.getWorld().spawnParticle(Particle.FLASH,
+                            loc,
+                            10,
+                            0.5d,
+                            0.5d,
+                            0.5d);
+                    wasInBlock = false;
+                }
+            }
             // check if theres a player there
             for (var possibleHit : p.getWorld().getEntities()) {
                 if (possibleHit == p) continue;
@@ -89,20 +121,16 @@ public class InstagibGamemode extends DefaultGamemode {
             }
         }
         hitTargets.forEach(c -> {
-            if (c instanceof Player) {
-                onKill(p, (Player) c);
-            } else {
-                c.remove();
-            }
+            onKill(p, (LivingEntity) c);
+            p.getWorld().spawnParticle(Particle.FLASH,
+                    c.getLocation(),
+                    10,
+                    0.5d,
+                    0.5d,
+                    0.5d);
         });
         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WARDEN_SONIC_BOOM, SoundCategory.MASTER, 1f, 2f);
-        p.getWorld().playSound(lookHit.toLocation(p.getWorld()), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 0.7f, 1f);
-        p.getWorld().spawnParticle(Particle.FLASH,
-                lookHit.toLocation(p.getWorld()),
-                10,
-                0.5d,
-                0.5d,
-                0.5d);
+
 
     }
 }
