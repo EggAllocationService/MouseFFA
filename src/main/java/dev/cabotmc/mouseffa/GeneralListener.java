@@ -44,6 +44,7 @@ public class GeneralListener implements Listener {
             e.setCancelled(true);
         }
     }
+    @EventHandler
     public void swap(PlayerSwapHandItemsEvent e) {
         e.setCancelled(true);
     }
