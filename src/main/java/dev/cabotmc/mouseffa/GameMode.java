@@ -57,6 +57,7 @@ public abstract class GameMode {
                     );
             score.setScore(score.getScore() + 1);
             died.remove();
+            ChickenManager.spawnChicken();
             return;
         }
         var k = (Player) died;
