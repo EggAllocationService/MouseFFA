@@ -1,6 +1,7 @@
 package dev.cabotmc.mouseffa.gamemodes;
 
 import dev.cabotmc.mouseffa.MouseFFA;
+import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,6 +21,14 @@ public class InstagibMileHighGamemode extends InstagibGamemode implements Listen
     public void move(PlayerMoveEvent e) {
         if (e.getPlayer().isOnGround()) {
             e.getPlayer().setVelocity(new Vector(0, 2, 0));
+        }
+    }
+
+    @EventHandler
+    public void entityMove(EntityMoveEvent e) {
+        // handles chickens
+        if (e.getEntity().isOnGround()) {
+            e.getEntity().setVelocity(new Vector(0, 2, 0));
         }
     }
     @Override
